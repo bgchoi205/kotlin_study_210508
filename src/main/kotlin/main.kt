@@ -11,14 +11,11 @@ fun main(){
     val memberController = MemberController()
     val boardController = BoardController()
 
-    memberRepository.makeTestMembers()
     boardRepository.makeTestBoards()
 
     println("==프로그램 시작==")
 
     while(true){
-
-        loginedMember = memberRepository.getMemberById(1)
 
         val prompt = if(loginedMember == null){
             "명령어 입력 : "
