@@ -1,3 +1,5 @@
+import java.io.File
+
 class ArticleController{
     fun add() {
         if(loginedMember == null){
@@ -82,7 +84,7 @@ class ArticleController{
             println("권한이 없습니다.")
             return
         }
-        articleRepository.articles.remove(article)
+        File("data/article/$id.json").delete()
         println("$id 번 게시물이 삭제되었습니다.")
     }
 
@@ -96,7 +98,7 @@ class ArticleController{
             println("게시물 번호를 입력해주세요")
             return
         }
-        val article = articleRepository.getArticleById(id)
+        val article = articleRepository.articleFromFile("data/article/$id.json")
         if(article == null){
             println("없는 게시물 번호입니다.")
             return
@@ -113,6 +115,8 @@ class ArticleController{
         article.title = title
         article.body = body
         article.updateDate = updateDate
+        val jsonStr = article.toJson()
+        writeStrFile("data/article/${article.id}.json", jsonStr)
         println("$id 번 게시물 수정완료")
     }
 

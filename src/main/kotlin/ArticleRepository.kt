@@ -1,23 +1,58 @@
 class ArticleRepository{
-    val articles = mutableListOf<Article>()
-    var lastArticleId = 0
+
+    fun getArticles() : List<Article>{
+        val articles = mutableListOf<Article>()
+        val lastId = getLastArticleId()
+        for(i in 1..lastId){
+            val article = articleFromFile("data/article/$i.json")
+            if(article != null){
+                articles.add(article)
+            }
+        }
+        return articles
+    }
+
+    fun articleFromFile(jsonFilePath : String): Article? {
+        val jsonStr = readStrFromFile(jsonFilePath)
+        if(jsonStr == ""){
+            return null
+        }
+        val map = mapFromJsonStr(jsonStr)
+
+        val id = map["id"].toString().toInt()
+        val title = map["title"].toString()
+        val body = map["body"].toString()
+        val memberId = map["memberId"].toString().toInt()
+        val boardId = map["boardId"].toString().toInt()
+        val regDate = map["regDate"].toString()
+        val updateDate = map["updateDate"].toString()
+
+        return Article(id, title, body, memberId, boardId, regDate, updateDate)
+    }
+
+    fun getLastArticleId(): Int{
+        val lastId = readIntFromFile("data/article/lastArticleId.txt",0)
+        return lastId
+    }
 
     fun addArticle(title: String, body: String, memberId : Int, boardId : Int): Int {
-        val id = ++lastArticleId
+        val id = getLastArticleId() + 1
         val regDate = Util.getDateNowStr()
         val updateDate = Util.getDateNowStr()
-        articles.add(Article(id, title, body, memberId, boardId, regDate, updateDate))
+        val article = Article(id, title, body, memberId, boardId, regDate, updateDate)
+        writeStrFile("data/article/$id.json", article.toJson())
+        writeIntFile("data/article/lastArticleId.txt", id)
         return id
     }
 
-    fun makeTestArticles(){
-        for(i in 1..30){
-            addArticle("제목$i", "내용$i", i % 9 + 1, i % 2 + 1)
-        }
-    }
+//    fun makeTestArticles(){
+//        for(i in 1..30){
+//            addArticle("제목$i", "내용$i", i % 9 + 1, i % 2 + 1)
+//        }
+//    }
 
     fun getArticleById(id: Int): Article? {
-        for(article in articles){
+        for(article in getArticles()){
             if(article.id == id){
                 return article
             }
@@ -60,6 +95,7 @@ class ArticleRepository{
     }
 
     private fun articlesFilterByKeyword(keyword: String): List<Article> {
+        val articles = getArticles()
         if(keyword.isEmpty()){
             return articles
         }

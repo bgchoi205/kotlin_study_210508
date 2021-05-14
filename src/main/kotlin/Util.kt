@@ -30,8 +30,6 @@ fun mapFromJsonStr(jsonStr : String): Map<String, Any>{
             map[key] = value.toInt()
         }
     }
-    println(map)
-
 
     return map.toMap()
 }
