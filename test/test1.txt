@@ -1,0 +1,9 @@
+{
+	"id":1,
+	"title":"hi",
+	"body":"hihi",
+	"memberId":1,
+	"boardId":1,
+	"regDate":"2021-05-14",
+	"updateDate":"2021-05-14"
+}
